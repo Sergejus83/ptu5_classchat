@@ -16,7 +16,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+# 1-django urls, 2-user registration, 3 -apps urls
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('classchat.urls'))
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('', include('classchat.urls')),
 ]
