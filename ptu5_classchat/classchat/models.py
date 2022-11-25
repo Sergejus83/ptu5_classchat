@@ -8,6 +8,9 @@ User = get_user_model()
 class Group(models.Model):
     name = models.CharField(_("group name"), max_length=50)
 
+    def __str__(self) -> str:
+        return _("{name}").format(name=self.name)
+
 
 class Subject(models.Model):
     name = models.CharField(_("subject name"), max_length=50)
@@ -17,6 +20,9 @@ class Subject(models.Model):
         on_delete=models.CASCADE,
         related_name='subjects',
     )
+
+    def __str__(self) -> str:
+        return _("{name} {group}").format(name=self.name, group=self.group)
 
 
 class Post(models.Model):
@@ -66,7 +72,8 @@ class PostComment(models.Model):
 
 
     def __str__(self) -> str:
-        return _("{post_comment} by {user} posted at {created_at}").format(
+        return _(" To post {post} comment: {post_comment} by {user} posted at {created_at}").format(
+            post = self.post,
             post_comment=self.post_comment,
             user=self.user,
             created_at=self.created_at,
