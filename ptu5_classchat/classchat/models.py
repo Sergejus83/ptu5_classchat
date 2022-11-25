@@ -38,6 +38,7 @@ class Post(models.Model):
 
     def __str__(self) -> str:
         return _("For {subject} about {title} by {user} posted at {created_at}").format(
+            subject=self.subject,
             title=self.title,
             user=self.user,
             created_at=self.created_at,
