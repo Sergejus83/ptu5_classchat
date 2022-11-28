@@ -56,6 +56,13 @@ class PostCommentDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = serializers.PostCommentSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     
+    def put(self, request, *args, **kwargs):
+        post = models.PostComment.objects.filter(pk=kwargs['pk'], user=self.request.user)
+        if post.exists():
+            return self.update(request, *args, **kwargs)
+        else:
+            raise ValidationError(_('Sorry! But you cannot change this COMMENT it is not yours'))
+
     def delete(self, request, *args, **kwargs):
         post = models.PostComment.objects.filter(pk=kwargs['pk'], user=self.request.user)
         if post.exists():
@@ -63,13 +70,6 @@ class PostCommentDetail(generics.RetrieveUpdateDestroyAPIView):
         else:
             raise ValidationError(_('Sorry! But you cannot delete this COMMENT it is not yours'))
 
-    def put(self, request, *args, **kwargs):
-        post = models.PostComment.objects.filter(pk=kwargs['pk'], user=self.request.user)
-        if post.exists():
-            return self.update(request, *args, **kwargs)
-        else:
-            raise ValidationError(_('Sorry! But you cannot change this COMMENT it is not yours'))
-    
 
 class PostLikeCreate(generics.CreateAPIView, mixins.DestroyModelMixin):
     serializer_class = serializers.PostLikeSerializer

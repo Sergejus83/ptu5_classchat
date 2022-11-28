@@ -41,6 +41,8 @@ class Post(models.Model):
         related_name='posts', 
         )
     created_at = models.DateTimeField(_("created at"), auto_now_add=True)
+    image = models.ImageField(_('image'), upload_to='user_images/', blank=True, null=True)
+
 
     def __str__(self) -> str:
         return _("For {subject} about {title} by {user} posted at {created_at}").format(
