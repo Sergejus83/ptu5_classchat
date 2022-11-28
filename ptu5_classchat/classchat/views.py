@@ -1,7 +1,8 @@
 from django.shortcuts import render
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, mixins, status
 from rest_framework.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
+from rest_framework.response import Response
 from . import models, serializers
 
 
@@ -70,8 +71,8 @@ class PostCommentDetail(generics.RetrieveUpdateDestroyAPIView):
             raise ValidationError(_('Sorry! But you cannot change this COMMENT it is not yours'))
     
 
-class PostLikeCreate(generics.CreateAPIView):
-    serializer_class = serializers.PostCommentSerializer
+class PostLikeCreate(generics.CreateAPIView, mixins.DestroyModelMixin):
+    serializer_class = serializers.PostLikeSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
@@ -80,7 +81,15 @@ class PostLikeCreate(generics.CreateAPIView):
         return models.PostLike.objects.filter(user=user, post=post)
 
     def perform_create(self, serializer):
+        if self.get_queryset().exists():
+            raise ValidationError(_('Sorry! But you cannot LIKE more tnan once!'))
         user = self.request.user
         post = models.Post.objects.get(pk=self.kwargs['pk'])
         serializer.save(user=user, post=post)
 
+    def delete(self, request, *args, **kwargs):
+        if self.get_queryset().exists():
+            self.get_queryset().delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            raise ValidationError(_('You do not like this post!'))
