@@ -7,5 +7,6 @@ urlpatterns = [
     path('post/<int:pk>/like/', views.PostLikeCreate.as_view()),
     path('post/<int:pk>/comments/', views.PostCommentList.as_view()),
     path('comment/<int:pk>/', views.PostCommentDetail.as_view()),
+    path('signup/', views.UserCreate.as_view()),
 
 ]
